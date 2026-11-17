@@ -11,20 +11,19 @@ public class QrCode {
     private Long id;
 
     @Column(name = "uuid", nullable = false)
-    private UUID uuid;
+    private UUID qrToken;
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    public QrCode() {}
 
-    public QrCode(Long id, UUID uuid, Member member) {
+    public QrCode(Long id, UUID qrToken, Member member) {
         this.id = id;
-        this.uuid = uuid;
+        this.qrToken = qrToken;
         this.member = member;
     }
-
-    public QrCode(){}
 
     public Long getId() {
         return id;
@@ -34,12 +33,12 @@ public class QrCode {
         this.id = id;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getQrToken() {
+        return qrToken;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setQrToken(UUID qrToken) {
+        this.qrToken = qrToken;
     }
 
     public Member getMember() {

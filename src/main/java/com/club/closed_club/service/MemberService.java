@@ -1,11 +1,17 @@
 package com.club.closed_club.service;
 
+import com.club.closed_club.dto.MemberMapper;
+import com.club.closed_club.dto.MemberRequest;
+import com.club.closed_club.dto.MemberResponse;
 import com.club.closed_club.entity.IMemberRepository;
 import com.club.closed_club.entity.Member;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +23,8 @@ public class MemberService {
         this.repository = repository;
     }
 
-    public Optional<Member> findMemberById(Long id) {
-        return repository.findById(id);
+    public Member findMemberById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + id));
     }
 
     public List<Member> findMemberByLastName(String lastName) {
@@ -29,7 +35,8 @@ public class MemberService {
         return repository.findByFirstNameAndLastName(firstName, lastName);
     }
 
-    public Member createMember(Member member) {
+    public Member createMember(MemberRequest memberRequest) {
+        Member member = new Member(memberRequest.getFirstName(), memberRequest.getLastName(), memberRequest.getMiddleName());
         return repository.save(member);
     }
 
@@ -47,8 +54,12 @@ public class MemberService {
                 });
     }
 
-    public List<Member> findAll () {
-        return repository.findAll();
+    public Page<Member> findAll (Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    public Page<Member> memberPage (String lastName, Pageable pageable) {
+        return repository.findByLastNameContainingIgnoreCase(lastName, pageable);
     }
 
 

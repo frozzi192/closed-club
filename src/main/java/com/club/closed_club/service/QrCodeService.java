@@ -22,15 +22,15 @@ public class QrCodeService {
         this.repository = repository;
     }
 
-    public Optional<QrCode> findByQr (UUID uuid) {
-        Optional<QrCode> qrCode = repository.findByUuid(uuid);
+    public Optional<QrCode> findByQr (UUID qrToken) {
+        Optional<QrCode> qrCode = repository.findByQrToken(qrToken);
         return qrCode;
     }
 
     public QrCode createQrCode (Long memberID) {
         QrCode qrCode = new QrCode();
-        UUID uuid = UUID.randomUUID();
-        qrCode.setUuid(uuid);
+        UUID qrToken = UUID.randomUUID();
+        qrCode.setQrToken(qrToken);
         Optional<Member> optional = repositoryMember.findById(memberID);
 
         Member member = optional.orElseThrow(() -> new RuntimeException("Member not found"));
@@ -48,8 +48,8 @@ public class QrCodeService {
     }
 
     @Transactional
-    public Optional<Member> useQrCode (UUID uuid) {
-         Optional<QrCode> qrCodeOptional = repository.findByUuid(uuid);
+    public Optional<Member> useQrCode (UUID qrToken) {
+         Optional<QrCode> qrCodeOptional = repository.findByQrToken(qrToken);
 
          if (qrCodeOptional.isEmpty()) {
              return Optional.empty();
@@ -57,8 +57,8 @@ public class QrCodeService {
 
          QrCode qrCode = qrCodeOptional.get();
 
-         UUID newUuid = UUID.randomUUID();
-         qrCode.setUuid(newUuid);
+         UUID newQrToken = UUID.randomUUID();
+         qrCode.setQrToken(newQrToken);
          repository.save(qrCode);
 
          return Optional.of(qrCode.getMember());

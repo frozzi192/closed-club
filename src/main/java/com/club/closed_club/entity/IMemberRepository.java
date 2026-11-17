@@ -1,6 +1,8 @@
 package com.club.closed_club.entity;
 
-import org.hibernate.annotations.processing.Find;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +27,11 @@ public interface IMemberRepository extends JpaRepository <Member, Long>{
             String lastName,
             String middleName
 
+    );
+
+    Page<Member> findByLastNameContainingIgnoreCase(
+            String lastName,
+            Pageable pageable
     );
 
 

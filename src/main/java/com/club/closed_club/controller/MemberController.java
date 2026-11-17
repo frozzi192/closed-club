@@ -6,6 +6,9 @@ import com.club.closed_club.dto.MemberResponse;
 import com.club.closed_club.entity.IMemberRepository;
 import com.club.closed_club.entity.Member;
 import com.club.closed_club.service.MemberService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -26,19 +29,18 @@ public class MemberController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<MemberResponse> responseEntity (@PathVariable Long id) {
-        Optional<Member> optionalMember= memberService.findMemberById(id);
-        return optionalMember
-                .map(m -> ResponseEntity.ok(MemberMapper.toResponse(m)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<MemberResponse> getMemberById (@PathVariable Long id) {
+        Member member = memberService.findMemberById(id);
+        MemberResponse memberResponse = MemberMapper.toResponse(member);
+        return ResponseEntity.ok(memberResponse);
+
 
     }
 
 
     @PostMapping
-    public ResponseEntity<MemberResponse> createMember(@RequestBody MemberRequest memberRequest) {
-        Member member = new Member(memberRequest.getFirstName(), memberRequest.getLastName(), memberRequest.getMiddleName());
-        Member savedMember = memberService.createMember(member);
+    public ResponseEntity<MemberResponse> createMember(@Valid @RequestBody MemberRequest memberRequest) {
+        Member savedMember = memberService.createMember(memberRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(MemberMapper.toResponse(savedMember));
@@ -61,11 +63,15 @@ public class MemberController {
 
     }
     @GetMapping
-    public List<MemberResponse> responseEntity() {
-        List<Member> member = memberService.findAll();
-        List<MemberResponse> memberResponses = member.stream()
-                .map(m -> MemberMapper.toResponse(m))
-                .toList();
+    public Page<MemberResponse> getAllMembers(@RequestParam(required = false) String lastName, Pageable pageable) {
+        Page<Member> member;
+        if (lastName == null || lastName.isBlank()) {
+            member = memberService.findAll(pageable);
+        } else {
+            member = memberService.memberPage(lastName, pageable);
+        }
+        Page<MemberResponse> memberResponses = member
+                .map(m -> MemberMapper.toResponse(m));
 
         return memberResponses;
     }

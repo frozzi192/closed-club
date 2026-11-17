@@ -28,9 +28,9 @@ public class QrCodeController {
         return qrCode;
     }
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<QrCode> findByQrCode (@PathVariable UUID uuid) {
-        Optional<QrCode> qrCode = qrCodeService.findByQr(uuid);
+    @GetMapping("/{id}")
+    public ResponseEntity<QrCode> findByQrCode (@PathVariable UUID id) {
+        Optional<QrCode> qrCode = qrCodeService.findByQr(id);
          return qrCode
                 .map(q -> ResponseEntity.ok(q))
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -50,9 +50,9 @@ public class QrCodeController {
         return ResponseEntity.ok(qrCode);
     }
 
-    @PostMapping("/use/{uuid}")
-    public ResponseEntity<Member> scanQrCode (@PathVariable UUID uuid) {
-        Optional<Member> qrCodeMember = qrCodeService.useQrCode(uuid);
+    @PostMapping("/use/{qrToken}")
+    public ResponseEntity<Member> scanQrCode (@PathVariable UUID qrToken) {
+        Optional<Member> qrCodeMember = qrCodeService.useQrCode(qrToken);
 
         return qrCodeMember
                 .map(m -> ResponseEntity.ok(m))
