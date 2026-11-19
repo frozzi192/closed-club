@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +25,10 @@ public class MemberService {
         this.repository = repository;
     }
 
-    public Member findMemberById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + id));
+    public MemberResponse findMemberById(Long id) {
+        Member member = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + id));
+        return MemberMapper.toResponse(member);
+
     }
 
     public List<Member> findMemberByLastName(String lastName) {
@@ -62,5 +66,17 @@ public class MemberService {
         return repository.findByLastNameContainingIgnoreCase(lastName, pageable);
     }
 
+    public Page<MemberResponse> getAllMembers(String lastName, Pageable pageable){
+        Page<Member> members;
+        if (lastName == null || lastName.isBlank()) {
+            members = repository.findAll(pageable);
+        } else  {
+            members = repository.findByLastNameContainingIgnoreCase(lastName, pageable);
+        }
+        Page<MemberResponse> memberResponses = members
+                .map(m -> MemberMapper.toResponse(m));
 
+
+        return  memberResponses;
+    }
 }

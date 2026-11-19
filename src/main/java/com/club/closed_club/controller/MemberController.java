@@ -30,11 +30,7 @@ public class MemberController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MemberResponse> getMemberById (@PathVariable Long id) {
-        Member member = memberService.findMemberById(id);
-        MemberResponse memberResponse = MemberMapper.toResponse(member);
-        return ResponseEntity.ok(memberResponse);
-
-
+        return ResponseEntity.ok(memberService.findMemberById(id));
     }
 
 
@@ -64,20 +60,7 @@ public class MemberController {
     }
     @GetMapping
     public Page<MemberResponse> getAllMembers(@RequestParam(required = false) String lastName, Pageable pageable) {
-        Page<Member> member;
-        if (lastName == null || lastName.isBlank()) {
-            member = memberService.findAll(pageable);
-        } else {
-            member = memberService.memberPage(lastName, pageable);
-        }
-        Page<MemberResponse> memberResponses = member
-                .map(m -> MemberMapper.toResponse(m));
-
-        return memberResponses;
+        return memberService.getAllMembers(lastName, pageable);
     }
-
-
-
-
 
 }

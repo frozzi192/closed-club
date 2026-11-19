@@ -24,8 +24,8 @@ public class QrCodeController {
 
     @PostMapping("/{memberId}")
     public QrCode createQrCode (@PathVariable Long memberId)  {
-        QrCode qrCode = qrCodeService.createQrCode(memberId);
-        return qrCode;
+        return qrCodeService.createQrCode(memberId);
+
     }
 
     @GetMapping("/{id}")

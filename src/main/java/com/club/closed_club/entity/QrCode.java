@@ -17,13 +17,12 @@ public class QrCode {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public QrCode() {}
 
-    public QrCode(Long id, UUID qrToken, Member member) {
-        this.id = id;
+    public QrCode(UUID qrToken, Member member) {
         this.qrToken = qrToken;
         this.member = member;
     }
+    public QrCode() {}
 
     public Long getId() {
         return id;

@@ -4,6 +4,7 @@ import com.club.closed_club.entity.IMemberRepository;
 import com.club.closed_club.entity.IQrCodeRepository;
 import com.club.closed_club.entity.Member;
 import com.club.closed_club.entity.QrCode;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,12 @@ public class QrCodeService {
     }
 
     public QrCode createQrCode (Long memberID) {
-        QrCode qrCode = new QrCode();
+        Member member = repositoryMember.findById(memberID)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+
         UUID qrToken = UUID.randomUUID();
-        qrCode.setQrToken(qrToken);
-        Optional<Member> optional = repositoryMember.findById(memberID);
-
-        Member member = optional.orElseThrow(() -> new RuntimeException("Member not found"));
-        qrCode.setMember(member);
+        QrCode qrCode = new QrCode(qrToken, member);
         return repository.save(qrCode);
-
     }
 
     public void deleteQrCode(Long id) {
