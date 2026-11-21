@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/members
+Content-Type: application/json
+
+{
+  "firstName": "Пётр",
+  "lastName": "Петров",
+  "middleName": "Алексеевич"
+}
